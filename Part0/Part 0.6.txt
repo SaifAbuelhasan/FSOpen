@@ -1,0 +1,4 @@
+title Part 0.6
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/notes/new_note
+server-->browser: Status Code: 201 Application/json
