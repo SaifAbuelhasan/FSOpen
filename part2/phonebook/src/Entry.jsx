@@ -1,6 +1,6 @@
 const Entry = ({ name, number }) => {
   return (
-    <p>{name} {number}</p>
+    <>{name} {number}</>
   )
 }
  
