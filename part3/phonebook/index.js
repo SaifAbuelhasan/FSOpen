@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+// For getting request json content
+app.use(express.json())
+
 let entries = [
     { 
     "id": 1,
@@ -37,6 +40,7 @@ app.get('/api/info', (req, res) => {
     res.send(infoPage)
 })
 
+
 // Get info for a single entry
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
@@ -57,6 +61,37 @@ app.delete('/api/persons/:id', (req, res) => {
     entries = entries.filter((entry) => entry.id !== id)
     // Return success
     res.status(204).end()
+})
+
+// Generate new unique id for new entry
+const generateId = () => {
+    // Get largest id from entries
+    const maxId = entries.length > 0
+        ? Math.max(...entries.map((entry) => entry.id))
+        : 0
+    return maxId + 1
+}
+
+// Add a new entry
+app.post('/api/persons', (req, res) => {
+    let newEntry = req.body
+    const found = entries.find((entry) => entry.name === newEntry.name)
+    console.log(newEntry);
+    // Check that name and number exists
+    if (!newEntry.name || !newEntry.number) {
+        res.status(400).send('New entry must contain name and number!')
+        return
+    }
+    // Check if name already exists
+    if (found) {
+        res.status(400).send('Name must be unique')
+        return
+    }
+
+    const id = generateId()
+    newEntry = {id, ...newEntry}
+    entries = entries.concat(newEntry)
+    res.json(newEntry)
 })
 
 const PORT = 3001
