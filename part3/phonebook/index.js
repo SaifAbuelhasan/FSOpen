@@ -1,8 +1,36 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 // For getting request json content
 app.use(express.json())
+
+
+// Creating body token
+morgan.token('body', (req, res, next) => {
+    if (req.method === 'POST') {
+        const object = JSON.stringify(req.body)
+        return object
+    }
+    return null
+})
+
+// For logging messages
+app.use(morgan(function (tokens, req, res) {
+    // Fields to log
+    const fields = [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms'
+    ]
+    // Add the body token if it's a post request
+    if (req.method === 'POST') {
+        return [...fields, '-', tokens.body(req, res)].join(' ')
+    }
+    return fields.join(' ')
+}))
 
 let entries = [
     { 
@@ -76,7 +104,6 @@ const generateId = () => {
 app.post('/api/persons', (req, res) => {
     let newEntry = req.body
     const found = entries.find((entry) => entry.name === newEntry.name)
-    console.log(newEntry);
     // Check that name and number exists
     if (!newEntry.name || !newEntry.number) {
         res.status(400).send('New entry must contain name and number!')
