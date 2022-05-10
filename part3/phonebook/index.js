@@ -8,6 +8,9 @@ require('dotenv').config()
 // For allowing cross origin resource sharing
 app.use(cors())
 
+// Adding frontend build
+app.use(express.static('build'))
+
 // For getting request json content
 app.use(express.json())
 
