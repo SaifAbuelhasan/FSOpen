@@ -1,6 +1,12 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+
+require('dotenv').config()
+
+// For allowing cross origin resource sharing
+app.use(cors())
 
 // For getting request json content
 app.use(express.json())
@@ -121,7 +127,7 @@ app.post('/api/persons', (req, res) => {
     res.json(newEntry)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
